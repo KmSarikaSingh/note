@@ -10,52 +10,112 @@ NotesWall is a simple note that allows users to create and save notes.
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tip Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="style.css" />
+    <title>NotesWall</title>
   </head>
   <body>
-    <div class="container">
-       
-      <div class="area">
-        <h2>Welcome to the Ronak's Tip calculator!</h2>
-        <h3>How Much Was Your Bill</h3>
-        <div>Rs. <input type="text" id="billAmount" /></div>
-        <h3 class="h3">How was your service?</h3>
-        <div>
-        <select id="ddlViewBy">
-            <option value="0" disabled="" selected="" >Choose an Option</option>
-            <option value=".3">30% Outstanding</option>
-            <option value=".2">20% Good</option>
-            <option value=".15">15% It was Okay</option>
-            <option value=".10">10% Bad</option>
-            <option value=".05">5% Terrible</option>
-          </select>
+    <div class="header">
+      <div class="content">
+        <div class="note-input">
+          <textarea
+            class="input-text m-1 get-note"
+            rows="3"
+            placeholder="// Write a note here"
+          ></textarea>
+          <div class="action m-3">
+            <input type="color" value="#ccffcc" class="theme m-1 get-color" />
+            <button class="btn m-1" id="add-btn">Add note</button>
           </div>
-        <h3 class="h3">How many people are sharing the bill?</h3>
-        <div> <input type="text" id="totalPeople" /></div>
-        <button id="calculate">Calculate</button>
+        </div>
       </div>
-   
     </div>
-    <script src="index.js"></script>
+
+    <div class="notes-list mt-3">
+      <div class="no-notes">
+        <h4 class="msg">You haven't added notes.</h4>
+      </div>
+    </div>
+    <script src="./index.js"></script>
   </body>
 </html>
 ```
 # JAVASCRIPT Code
 ```
-let container = document.querySelector(".area");
-let calculate = document.querySelector("#calculate");
-let div = document.createElement("p");
-calculate.addEventListener("click",()=>{
-    div.innerText =""
-    let amount=document.querySelector('#billAmount').value;
-    let totalPeople = document.getElementById("totalPeople").value;
-  
-    var service = document.getElementById("ddlViewBy").value;
-    div.innerText = ` Tip Amount is ${amount*service/totalPeople}`
-    // console.log(div);
-    container.appendChild(div);
+const input = document.querySelector('.get-note');
+const addNoteBtn = document.querySelector('#add-btn');
+addNoteBtn.addEventListener("click", addNewNote);
+const allNotes = [];
 
-   
+const color = document.querySelector('.get-color');
+const notesList = document.querySelector('.notes-list');
+
+document.addEventListener('keypress', (event) => {
+    if (event.keyCode === 13) {
+        addNewNote();
+    }
 })
+
+function addNewNote() {
+    if (input.value) {
+        let newNote = {
+            note: input.value,
+            noteColor: color.value
+
+        };
+        allNotes.push(newNote);
+    }
+    else {
+        alert("A note can't be empty.");
+
+    }
+   
+
+
+
+    input.value = "";
+    input.focus();
+    
+    displayNotes(allNotes);
+
+    
+   
+}
+
+
+function displayNotes(notes) {
+    notesList.innerHTML = " ";
+    notes.forEach(element => {
+       let noteHTML= `
+        <div class="note" style="background-color:${element.noteColor};">
+            <div class="note-view">
+                ${element.note}
+            </div>
+            <div>
+                <a class="deleteBtn">Del</a>
+            </div>
+        </div>
+        `;
+
+        notesList.insertAdjacentHTML('afterbegin', noteHTML);
+        
+        const deleteBtn = document.querySelector('.deleteBtn');
+        deleteBtn.addEventListener('click', e => { deleteNote(e,element);})
+
+
+    });
+}
+
+
+function deleteNote(e,element) {
+    let item = e.target.parentElement.parentElement.parentElement;
+    item.parentNode.removeChild(item);
+    allNotes.pop(element);
+    
+}
 ```
